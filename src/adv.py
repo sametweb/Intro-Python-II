@@ -1,5 +1,5 @@
 from room import Room
-
+from player import Player
 # Declare all the rooms
 
 room = {
@@ -37,7 +37,15 @@ room['treasure'].s_to = room['narrow']
 # Main
 #
 
+player_name = ""
+
+while len(player_name) < 1:
+    player_name = input('Please enter a nickname: ')
+
 # Make a new player object that is currently in the 'outside' room.
+new_player = Player(player_name, room['outside'])
+
+print('Welcome %s' % player_name)
 
 # Write a loop that:
 #
@@ -49,3 +57,39 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+is_playing = True
+
+new_player.current_room()
+
+while is_playing:
+
+    direction = input('Which way you wanna go? ')
+
+    if(direction == 'q'):
+        is_playing = False
+
+    elif direction.lower() == 'east':
+        if hasattr(new_player.room, 'e_to'):
+            new_player.room = new_player.room.e_to
+            new_player.current_room()
+        else:
+            print('There is nothing there!')
+    elif direction.lower() == 'west':
+        if hasattr(new_player.room, 'w_to'):
+            new_player.room = new_player.room.w_to
+            new_player.current_room()
+        else:
+            print('There is nothing there!')
+    elif direction.lower() == "north":
+        if hasattr(new_player.room, 'n_to'):
+            new_player.room = new_player.room.n_to
+            new_player.current_room()
+        else:
+            print('There is nothing there!')
+    elif direction.lower() == 'south':
+        if hasattr(new_player.room, 's_to'):
+            new_player.room = new_player.room.s_to
+            new_player.current_room()
+        else:
+            print('There is nothing there!')

@@ -1,19 +1,31 @@
 # Write a class to hold player information, e.g. what room they are in
 # currently.
 from colorama import Fore, Back, Style
+from item import Weapon, Item
 
 
 class Player:
-    def __init__(self, nickname, current_room=None, inventory=None):
+    def __init__(self, nickname, current_room=None, inventory=None, dmg=0):
         self.nickname = nickname
         self.current_room = current_room
         if inventory == None:
             self.inventory = []
         else:
             self.inventory = inventory
+        self.dmg = dmg
 
     def __str__(self):
-        return f"{Fore.BLACK}{Back.WHITE} {self.nickname} {Style.RESET_ALL}"
+        return f"{Fore.BLACK}{Back.WHITE} {self.nickname} ({self.dmg}) {Style.RESET_ALL}"
+
+    def attack(self, unit):
+        for monster in self.current_room.monsters:
+            if monster.name == unit:
+                unit = monster
+                break
+        if unit.health > self.dmg:
+            unit.health -= self.dmg
+        else:
+            unit.dies_at(self.current_room)
 
     def show_inventory(self):
         if len(self.inventory) > 0:
@@ -25,12 +37,11 @@ class Player:
                     item_counts.update(
                         {item.name: item_counts.get(item.name) + 1})
 
-            print(str(item_counts))
-
-            player_inventory = 'Items: ' + \
-                ', '.join([item.name for item in self.inventory])
+            player_inventory = 'Your inventory: ' + \
+                ', '.join(
+                    [f'{item}: {item_counts[item]}' for item in item_counts])
         else:
-            player_inventory = 'No items'
+            player_inventory = 'No items in inventory'
         print(f'{Back.BLUE}{Fore.WHITE}{player_inventory}{Style.RESET_ALL}')
 
     def move_to(self, direction):

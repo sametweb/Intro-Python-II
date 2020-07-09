@@ -1,19 +1,22 @@
 from room import Room
 from player import Player
-from item import Item
-from colorama import Fore
-from colorama import Style
+from item import Item, Weapon
+from monster import Monster
+from colorama import Fore, Style
 from os import system, name
 
 # Declare all the rooms
 
-sword = Item("sword", "you can slay your enemy with this")
+sword = Weapon("sword", "you can slay your enemy with this")
 mana = Item("mana", "you can cast spells with this")
 heal = Item("heal", "you can heal your health with this")
 
+roshan = Monster('Roshan')
+creep = Monster('Creep')
+
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons", [sword]),
+                     "North of you, the cave mount beckons", [sword], [roshan, creep]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east.""", [mana]),
@@ -105,21 +108,19 @@ while is_playing:
 
     else:
         command = command.split(' ')
-
-        print(new_player)
         if len(command) == 1:
             command = command[0]
             new_player.move_to(command)
         elif len(command) == 2:
             if command[0] == 'get' or command[0] == 'take':
                 requested_item = command[1]
+
                 for item in new_player.current_room.items:
                     if item.name == requested_item:
                         requested_item = item
                         break
-                    else:
-                        requested_item = None
-                if requested_item:
+
+                if type(requested_item) != str:
                     requested_item.add_to_player(new_player)
                 else:
                     print('Item not here')
@@ -135,4 +136,9 @@ while is_playing:
                     dropping_item.remove_from_player(new_player)
                 else:
                     print("You can't drop what you don't have!")
+
+            elif command[0] == 'attack':
+                unit = command[1]
+                new_player.attack(unit)
+            print(new_player)
             print(new_player.current_room)

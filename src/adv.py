@@ -1,24 +1,29 @@
 from room import Room
 from player import Player
+from item import Item
 from colorama import Fore
 from colorama import Style
 from os import system, name
 
 # Declare all the rooms
 
+sword = Item("sword", "you can slay your enemy with this")
+mana = Item("mana", "you can cast spells with this")
+heal = Item("heal", "you can heal your health with this")
+
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", [sword]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""", [mana]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", [heal]),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""", [mana, sword, heal]),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
@@ -85,12 +90,49 @@ while is_playing:
         is_playing = False
         break
 
+    clear_screen()
+
     if(command == 'help' or command == 'h'):
         print('[s] for south')
         print('[n] for north')
         print('[e] for east')
         print('[w] for west')
+        print(new_player.current_room)
 
-    clear_screen()
-    print(new_player)
-    new_player.move_to(command)
+    elif command == 'i' or command == 'inventory':
+        new_player.show_inventory()
+        print(new_player.current_room)
+
+    else:
+        command = command.split(' ')
+
+        print(new_player)
+        if len(command) == 1:
+            command = command[0]
+            new_player.move_to(command)
+        elif len(command) == 2:
+            if command[0] == 'get' or command[0] == 'take':
+                requested_item = command[1]
+                for item in new_player.current_room.items:
+                    if item.name == requested_item:
+                        requested_item = item
+                        break
+                    else:
+                        requested_item = None
+                if requested_item:
+                    requested_item.add_to_player(new_player)
+                else:
+                    print('Item not here')
+            elif command[0] == 'drop':
+                dropping_item = command[1]
+                for item in new_player.inventory:
+                    if item.name == dropping_item:
+                        dropping_item = item
+                        break
+                    else:
+                        requested_item = None
+                if dropping_item:
+                    dropping_item.remove_from_player(new_player)
+                else:
+                    print("You can't drop what you don't have!")
+            print(new_player.current_room)

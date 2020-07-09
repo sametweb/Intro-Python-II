@@ -1,5 +1,9 @@
 from room import Room
 from player import Player
+from colorama import Fore
+from colorama import Style
+from os import system, name
+
 # Declare all the rooms
 
 room = {
@@ -37,6 +41,16 @@ room['treasure'].s_to = room['narrow']
 # Main
 #
 
+
+def clear_screen():
+    if name == 'nt':
+        system('cls')
+    else:
+        system('clear')
+
+
+clear_screen()
+
 player_name = ""
 
 while len(player_name) < 1:
@@ -45,7 +59,8 @@ while len(player_name) < 1:
 # Make a new player object that is currently in the 'outside' room.
 new_player = Player(player_name, room['outside'])
 
-print('Welcome %s' % player_name)
+
+print('Welcome', new_player)
 
 # Write a loop that:
 #
@@ -60,36 +75,22 @@ print('Welcome %s' % player_name)
 
 is_playing = True
 
-new_player.current_room()
+print(new_player.current_room)
 
 while is_playing:
 
-    direction = input('Which way you wanna go? ')
+    command = input('What do you want to do? ')
 
-    if(direction == 'q'):
+    if(command == 'q'):
         is_playing = False
+        break
 
-    elif direction.lower() == 'east':
-        if hasattr(new_player.room, 'e_to'):
-            new_player.room = new_player.room.e_to
-            new_player.current_room()
-        else:
-            print('There is nothing there!')
-    elif direction.lower() == 'west':
-        if hasattr(new_player.room, 'w_to'):
-            new_player.room = new_player.room.w_to
-            new_player.current_room()
-        else:
-            print('There is nothing there!')
-    elif direction.lower() == "north":
-        if hasattr(new_player.room, 'n_to'):
-            new_player.room = new_player.room.n_to
-            new_player.current_room()
-        else:
-            print('There is nothing there!')
-    elif direction.lower() == 'south':
-        if hasattr(new_player.room, 's_to'):
-            new_player.room = new_player.room.s_to
-            new_player.current_room()
-        else:
-            print('There is nothing there!')
+    if(command == 'help' or command == 'h'):
+        print('[s] for south')
+        print('[n] for north')
+        print('[e] for east')
+        print('[w] for west')
+
+    clear_screen()
+    print(new_player)
+    new_player.move_to(command)

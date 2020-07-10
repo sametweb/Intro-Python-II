@@ -15,17 +15,21 @@ class Player:
         self.dmg = dmg
 
     def __str__(self):
-        return f"{Fore.BLACK}{Back.WHITE} {self.nickname} ({self.dmg}) {Style.RESET_ALL}"
+        return f"{Fore.BLACK}{Back.WHITE} {self.nickname} (Attack dmg: {self.dmg}) {Style.RESET_ALL}"
 
     def attack(self, unit):
         for monster in self.current_room.monsters:
             if monster.name == unit:
                 unit = monster
                 break
-        if unit.health > self.dmg:
-            unit.health -= self.dmg
+
+        if type(unit) == str:
+            print(f'{Back.RED}Wield wisely!{Style.RESET_ALL}')
         else:
-            unit.dies_at(self.current_room)
+            if unit.health > self.dmg:
+                unit.health -= self.dmg
+            else:
+                unit.dies_at(self.current_room)
 
     def show_inventory(self):
         if len(self.inventory) > 0:

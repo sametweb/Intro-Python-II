@@ -57,9 +57,9 @@ def clear_screen():
         system('clear')
 
 
-clear_screen()
-
 player_name = ""
+
+clear_screen()
 
 while len(player_name) < 1:
     player_name = input('Please enter a nickname: ')
@@ -67,8 +67,10 @@ while len(player_name) < 1:
 # Make a new player object that is currently in the 'outside' room.
 new_player = Player(player_name, room['outside'])
 
+clear_screen()
 
 print('Welcome', new_player)
+
 
 # Write a loop that:
 #
@@ -100,6 +102,11 @@ while is_playing:
         print('[n] for north')
         print('[e] for east')
         print('[w] for west')
+        print('get [item_name] for picking up items')
+        print('take [item_name] for picking up items')
+        print('drop [item_name] for dropping items')
+        print('attack [unit_name] for attacking monsters')
+
         print(new_player.current_room)
 
     elif command == 'i' or command == 'inventory':
@@ -109,8 +116,10 @@ while is_playing:
     else:
         command = command.split(' ')
         if len(command) == 1:
+            print(new_player)
             command = command[0]
             new_player.move_to(command)
+
         elif len(command) == 2:
             if command[0] == 'get' or command[0] == 'take':
                 requested_item = command[1]
@@ -132,7 +141,7 @@ while is_playing:
                         break
                     else:
                         requested_item = None
-                if dropping_item:
+                if isinstance(dropping_item, Item) or isinstance(dropping_item, Weapon):
                     dropping_item.remove_from_player(new_player)
                 else:
                     print("You can't drop what you don't have!")
